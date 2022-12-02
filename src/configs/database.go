@@ -2,12 +2,9 @@ package configs
 
 import (
 	models "go-boilerplate/src/models/entities"
+	getLogger "go-boilerplate/src/shared/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"log"
-	"os"
-	"time"
 )
 
 var DB *gorm.DB
@@ -20,26 +17,16 @@ func Migrate(db *gorm.DB) {
 
 }
 func Init(url string) *gorm.DB {
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold: time.Second, // Slow SQL threshold
-			//LogLevel:                  logger.Info, // Log level
-			IgnoreRecordNotFoundError: true, // Ignore ErrRecordNotFound error for logger
-			// todo: depend color
-			Colorful: true,
-		},
-	)
-
 	// url config
 	db, err := gorm.Open(postgres.Open(url), &gorm.Config{
-		Logger: newLogger,
+		// todo: only for dev
+		Logger: getLogger.GetLogger().DatabaseLogging,
 	})
 	if err != nil {
 		panic("Failed to connect database")
 	}
-	sqlDB, _ := db.DB()
-	sqlDB.SetMaxOpenConns(100)
+	sqlCfg, _ := db.DB()
+	sqlCfg.SetMaxOpenConns(100)
 	DB = db
 	return DB
 }

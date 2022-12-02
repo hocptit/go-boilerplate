@@ -1,7 +1,6 @@
 package books
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"go-boilerplate/src/configs"
@@ -10,6 +9,7 @@ import (
 	"go-boilerplate/src/modules/books/dto"
 	"go-boilerplate/src/shared/base/base_validator"
 	"go-boilerplate/src/shared/exception"
+	getLogger "go-boilerplate/src/shared/logger"
 	response "go-boilerplate/src/shared/response"
 	"gorm.io/gorm"
 	"log"
@@ -17,11 +17,13 @@ import (
 )
 
 func GetBooks(c *gin.Context) {
+	logger := getLogger.GetLogger().Logging
+	logger.Info("Xin chao")
 	TestPanic()
 	// Validator
 	var listBookDto dto.ListBookDto
 	base_validator.ValidatorQuery(c, &listBookDto)
-	fmt.Println(listBookDto)
+	//fmt.Println(listBookDto)
 	var bookRepository repositories.IBookRepository = repositories.NewBookRepository(configs.GetDB())
 
 	books, err := bookRepository.ListBooks()

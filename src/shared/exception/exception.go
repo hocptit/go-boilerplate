@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-boilerplate/src/constants/error_code"
 	"go-boilerplate/src/shared/response"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"runtime"
 	"time"
 )
@@ -67,7 +67,7 @@ func stack(skip int) []byte {
 			return nil
 		}
 		if file != lastFile {
-			data, err := ioutil.ReadFile(file)
+			data, err := os.ReadFile(file)
 			if err != nil {
 				continue
 			}
