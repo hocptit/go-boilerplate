@@ -11,6 +11,7 @@ import (
 	"go-boilerplate/src/shared/exception"
 	getLogger "go-boilerplate/src/shared/logger"
 	response "go-boilerplate/src/shared/response"
+	"go-boilerplate/src/shared/utils"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -18,7 +19,7 @@ import (
 
 func GetBooks(c *gin.Context) {
 	logger := getLogger.GetLogger().Logging
-	logger.Info("Xin chao")
+	logger.Info(utils.TID(c), "My LOGGER")
 	TestPanic()
 	// Validator
 	var listBookDto dto.ListBookDto

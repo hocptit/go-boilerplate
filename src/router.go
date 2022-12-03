@@ -2,6 +2,8 @@ package src
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"go-boilerplate/src/constants"
 	bookRouters "go-boilerplate/src/modules/books"
 	"go-boilerplate/src/shared/exception"
 	getLogger "go-boilerplate/src/shared/logger"
@@ -9,12 +11,12 @@ import (
 
 func Router(router *gin.Engine) {
 	router.Use(func(context *gin.Context) {
-		context.Set("A", "BC")
+		context.Set(constants.TRACE_ID, uuid.New().String())
 	})
 	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		//fmt.Println(param.Keys["A"])
 		logger := getLogger.GetLogger().Logging
-		logger.Infof("%s %s %s %s %d %s %s %s",
+		logger.Infof("[%s] %s %s %s %s %d %s %s %s",
+			param.Keys[constants.TRACE_ID],
 			param.ClientIP,
 			param.Method,
 			param.Path,
