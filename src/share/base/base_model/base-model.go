@@ -1,4 +1,4 @@
-package base_model
+package basemodel
 
 import "time"
 
@@ -6,7 +6,7 @@ import "time"
 // It may be embedded into your model, or you may build your own model without it
 //
 //	type User struct {
-//	  base_model.Model
+//	  basemodel.Model
 //	}
 type Model struct {
 	ID        uint      `gorm:"primarykey" json:"id"`

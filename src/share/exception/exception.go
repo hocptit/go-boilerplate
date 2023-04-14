@@ -3,13 +3,17 @@ package exception
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go-boilerplate/src/constants/error_code"
-	"go-boilerplate/src/shared/response"
+	errorcode "go-server/src/constants/error_code"
+	"go-server/src/share/constant"
+	getLogger "go-server/src/share/logger"
+	"go-server/src/share/response"
+	"go-server/src/share/utils"
 	"net/http"
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -84,22 +88,33 @@ func stack(skip int) []byte {
 func timeFormat(t time.Time) string {
 	return t.Format("2006/01/02 - 15:04:05")
 }
-func RecoveryError() gin.HandlerFunc {
+func RecoveryError(appIsReturnDetailErrors string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
+			logger := getLogger.GetLogger().Logging
 			if err := recover(); err != nil {
+				// nolint
 				switch err.(type) {
 				// check validator class
 				case response.Response:
+					// nolint
 					errData, _ := err.(response.Response)
-					ReturnBadRequestError(c, errData.ErrorCode, errData.Errors)
+					if appIsReturnDetailErrors == "true" {
+						ReturnBadRequestError(c, errData.ErrorCode, errData.Errors)
+						return
+					}
+					ReturnBadRequestError(c, errData.ErrorCode, "")
 					return
 				default:
 					stack := stack(3)
-					// todo: logger
-					fmt.Printf("[Recovery] %s panic recovered:\n%s\n%s%s",
-						timeFormat(time.Now()), err, stack, "\033[0m")
-					ReturnInternalServerError(c, error_code.INTERNAL_SERVER, err)
+					logger.Errorf("[Recovery] %s %s panic recovered:\n%s\n%s%s",
+						utils.TID(c), timeFormat(time.Now()), err, stack, "\033[0m")
+
+					if appIsReturnDetailErrors == "true" {
+						ReturnInternalServerError(c, errorcode.InternalServer, err)
+						return
+					}
+					ReturnInternalServerError(c, errorcode.InternalServer, "")
 					return
 				}
 			}
@@ -108,24 +123,28 @@ func RecoveryError() gin.HandlerFunc {
 	}
 }
 
+// nolint
 func ReturnError(c *gin.Context, code int, errorCode string, errors any) {
+	traceID := c.Keys[constant.TraceID].(string)
 	responseData := response.Response{
 		Data:       nil,
-		Message:    error_code.GetMsg(errorCode),
+		Message:    errorcode.GetMsg(errorCode),
 		Errors:     errors,
 		ErrorCode:  errorCode,
 		StatusCode: code,
+		TraceID:    traceID,
 		Success:    false,
 	}
 	// 200
 	c.JSON(http.StatusOK, responseData)
-	return
 }
 
+// BaseError
+// nolint
 func BaseError(code int, errorCode string, errors any) response.Response {
 	return response.Response{
 		Data:       nil,
-		Message:    error_code.GetMsg(errorCode),
+		Message:    errorcode.GetMsg(errorCode),
 		Errors:     errors,
 		ErrorCode:  errorCode,
 		StatusCode: code,
@@ -133,32 +152,38 @@ func BaseError(code int, errorCode string, errors any) response.Response {
 	}
 }
 
+// ReturnBadRequestError Using for share
+// nolint
 func ReturnBadRequestError(c *gin.Context, errorCode string, errors any) {
-	var code int = http.StatusBadRequest
-	ReturnError(c, code, errorCode, errors)
+	ReturnError(c, http.StatusBadRequest, errorCode, errors)
 }
 
+// ReturnInternalServerError
+// nolint
 func ReturnInternalServerError(c *gin.Context, errorCode string, errors any) {
-	var code int = http.StatusInternalServerError
-	ReturnError(c, code, errorCode, errors)
+	ReturnError(c, http.StatusInternalServerError, errorCode, errors)
 }
 
+// ReturnUnauthorizedError
+// nolint
 func ReturnUnauthorizedError(c *gin.Context, errorCode string, errors any) {
-	var code int = http.StatusUnauthorized
-	ReturnError(c, code, errorCode, errors)
+	ReturnError(c, http.StatusUnauthorized, errorCode, errors)
 }
 
+// BadRequestError Using with panic
+// nolint
 func BadRequestError(errorCode string, errors any) response.Response {
-	var code int = http.StatusBadRequest
-	return BaseError(code, errorCode, errors)
+	return BaseError(http.StatusBadRequest, errorCode, errors)
 }
 
+// InternalServerError
+// nolint
 func InternalServerError(errorCode string, errors any) response.Response {
-	var code int = http.StatusInternalServerError
-	return BaseError(code, errorCode, errors)
+	return BaseError(http.StatusInternalServerError, errorCode, errors)
 }
 
+// UnauthorizedError
+// nolint
 func UnauthorizedError(errorCode string, errors any) response.Response {
-	var code int = http.StatusUnauthorized
-	return BaseError(code, errorCode, errors)
+	return BaseError(http.StatusUnauthorized, errorCode, errors)
 }

@@ -1,12 +1,12 @@
-package error_code
+package errorcode
 
 // xxyyzz: xx: MODULE; yy: FUNCTION; zz: error code in FUNCTION
 const (
 	/* COMMON ERROR*/
 
-	INTERNAL_SERVER = "000001"
-	INVALID_PARAMS  = "000002"
-	UNKNOWN         = "999999"
+	InternalServer = "000001"
+	InvalidParams  = "000002"
+	UNKNOWN        = "999999"
 
 	/* COMMON ERROR*/
 
@@ -14,20 +14,20 @@ const (
 
 var MsgFlags = map[string]string{
 	/* COMMON ERROR*/
-	INTERNAL_SERVER: "INTERNAL_SERVER",
-	INVALID_PARAMS:  "INVALID_PARAMS",
-	UNKNOWN:         "UNKNOWN",
+	InternalServer: "INTERNAL_SERVER",
+	InvalidParams:  "INVALID_PARAMS",
+	UNKNOWN:        "UNKNOWN",
 	/* COMMON ERROR*/
 
 	/* AUTHOR ERROR*/
 
-	NOT_FOUND_AUTHOR: "NOT_FOUND_AUTHOR",
+	NotFoundAuthor: "NOT_FOUND_AUTHOR",
 
 	/* AUTHOR ERROR*/
 
 	/* BOOK ERROR*/
 
-	NOT_FOUND_BOOK: "NOT_FOUND_BOOK",
+	NotFoundBook: "NOT_FOUND_BOOK",
 
 	/* BOOK ERROR*/
 

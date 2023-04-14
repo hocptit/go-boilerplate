@@ -1,0 +1,18 @@
+name: deploy develop branch
+run-name: ${{ github.actor }} is deploying develop branch
+on:
+  push:
+    branches:
+      - 'develop'
+jobs:
+  deploy-dev:
+    runs-on: [self-hosted,gz-locker-server-dev]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: |
+          echo "${{ secrets.ENV }}" >> .env
+          ls
+          docker build -t gz-locker-server .
+          docker-compose -f docker-compose-dev.yaml up -d
+#          docker image prune -f

@@ -1,22 +1,25 @@
 package src
 
 import (
+	"go-server/src/configs"
+	bookRouters "go-server/src/modules/books"
+	dexRouters "go-server/src/modules/dex"
+	"go-server/src/share/constant"
+	"go-server/src/share/exception"
+	getLogger "go-server/src/share/logger"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"go-boilerplate/src/constants"
-	bookRouters "go-boilerplate/src/modules/books"
-	"go-boilerplate/src/shared/exception"
-	getLogger "go-boilerplate/src/shared/logger"
 )
 
-func Router(router *gin.Engine) {
+func Router(router *gin.Engine, config configs.Config) {
 	router.Use(func(context *gin.Context) {
-		context.Set(constants.TRACE_ID, uuid.New().String())
+		context.Set(constant.TraceID, uuid.New().String())
 	})
 	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		logger := getLogger.GetLogger().Logging
 		logger.Infof("[%s] %s %s %s %s %d %s %s %s",
-			param.Keys[constants.TRACE_ID],
+			param.Keys[constant.TraceID],
 			param.ClientIP,
 			param.Method,
 			param.Path,
@@ -27,34 +30,33 @@ func Router(router *gin.Engine) {
 			param.ErrorMessage)
 		return ""
 	}))
-	router.Use(exception.RecoveryError())
+	router.Use(exception.RecoveryError(config.AppIsReturnDetailErrors))
 	v1route := router.Group("/api/v1")
+	/* A */
 
-	{
-		/* A */
+	/* End A */
 
-		/* A */
+	/* B */
+	bookRouters.Controller(v1route)
+	/* End B */
 
-		/* B */
-		bookRouters.BookController(v1route)
-		/* B */
+	/* C */
 
-		/* C */
+	/* End C */
 
-		/* C */
+	/* D */
+	dexRouters.Controller(v1route)
+	/* End D */
 
-		/* D */
+	/* E */
 
-		/* D */
+	/* End E */
 
-		/* E */
+	/* F */
 
-		/* E */
+	/* End F */
 
-		/* F */
+	/* G */
 
-		/* F */
-
-	}
-
+	/* End G */
 }

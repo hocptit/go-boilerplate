@@ -1,11 +1,11 @@
 package entities
 
-import "go-boilerplate/src/shared/base/base_model"
+import basemodel "go-server/src/share/base/base_model"
 
 type BookEntity struct {
-	base_model.Model
+	basemodel.Model
 	Title       string     `json:"title"`
-	AuthorId    int        `json:"author"`
+	AuthorID    int        `json:"author"`
 	Description string     `json:"description"`
 	Author      UserEntity `gorm:"references:ID"`
 }

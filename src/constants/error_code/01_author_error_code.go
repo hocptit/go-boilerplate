@@ -1,11 +1,11 @@
-package error_code
+package errorcode
 
-// xxyyzz: xx: MODULE; yy: FUNCTION; zz: error code in FUNCTION
+// xx_yy_zz: xx: MODULE; yy: FUNCTION; zz: error code in FUNCTION
 
 const (
 	/* AUTHOR ERROR*/
 
-	NOT_FOUND_AUTHOR = "010101"
+	NotFoundAuthor = "010101"
 
 	/* AUTHOR ERROR*/
 

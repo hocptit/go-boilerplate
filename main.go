@@ -1,21 +1,26 @@
 package main
 
 import (
+	"go-server/src"
+	"go-server/src/configs"
+	"go-server/src/share/constant"
+	getLogger "go-server/src/share/logger"
+
 	"github.com/gin-gonic/gin"
-	"go-boilerplate/src"
-	"go-boilerplate/src/configs"
-	getLogger "go-boilerplate/src/shared/logger"
 )
 
 func main() {
 	config, _ := configs.LoadConfig(".env")
-	getLogger.GetNewLogger()
-	db := configs.Init(config.DbUrl)
-	// todo: migrate only dev env
-	configs.Migrate(db)
-	// todo: config mode
-	gin.SetMode(gin.ReleaseMode)
+	logger := getLogger.GetNewLogger(config.AppIsWriteLog).Logging
+	logger.Info("Prepare start server..")
+	db := configs.Init(config)
+	if config.Env == constant.EnvProd {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		configs.Migrate(db)
+	}
 	app := gin.New()
-	src.Router(app)
+	src.Router(app, config)
+	logger.Infof("Server start on port %s", config.Port)
 	app.Run(":" + config.Port).Error()
 }

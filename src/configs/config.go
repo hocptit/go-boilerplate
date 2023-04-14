@@ -5,8 +5,13 @@ import (
 )
 
 type Config struct {
-	Port  string `mapstructure:"PORT"`
-	DbUrl string `mapstructure:"DB_URL"`
+	Port                    string `mapstructure:"PORT"`
+	DBUrl                   string `mapstructure:"DB_URL"`
+	Env                     string `mapstructure:"ENV"`
+	AppName                 string `mapstructure:"APP_NAME"`
+	AppIsWriteLog           string `mapstructure:"APP_IS_WRITE_LOG"`
+	AppIsReturnDetailErrors string `mapstructure:"APP_IS_RETURN_DETAIL_ERRORS"`
+	DBIsWriteLog            string `mapstructure:"DB_IS_WRITE_LOG"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

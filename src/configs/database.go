@@ -1,8 +1,8 @@
 package configs
 
 import (
-	models "go-boilerplate/src/models/entities"
-	getLogger "go-boilerplate/src/shared/logger"
+	getLogger "go-server/src/share/logger"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -10,23 +10,24 @@ import (
 var DB *gorm.DB
 
 func Migrate(db *gorm.DB) {
-	err := db.AutoMigrate(&models.BookEntity{}, &models.UserEntity{})
+	err := db.AutoMigrate()
 	if err != nil {
 		panic(err)
 	}
-
 }
-func Init(url string) *gorm.DB {
-	// url config
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{
-		// todo: only for dev
-		Logger: getLogger.GetLogger().DatabaseLogging,
-	})
+func Init(config Config) *gorm.DB {
+	var dbConfig gorm.Config
+
+	if config.DBIsWriteLog == "true" {
+		dbConfig.Logger = getLogger.GetLogger().DatabaseLogging
+	}
+	db, err := gorm.Open(postgres.Open(config.DBUrl), &dbConfig)
 	if err != nil {
-		panic("Failed to connect database")
+		panic(err)
 	}
 	sqlCfg, _ := db.DB()
-	sqlCfg.SetMaxOpenConns(100)
+	maxConn := 100
+	sqlCfg.SetMaxOpenConns(maxConn)
 	DB = db
 	return DB
 }

@@ -1,20 +1,21 @@
 package books
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
-	"go-boilerplate/src/configs"
-	"go-boilerplate/src/constants/error_code"
-	"go-boilerplate/src/models/repositories"
-	"go-boilerplate/src/modules/books/dto"
-	"go-boilerplate/src/shared/base/base_validator"
-	"go-boilerplate/src/shared/exception"
-	getLogger "go-boilerplate/src/shared/logger"
-	response "go-boilerplate/src/shared/response"
-	"go-boilerplate/src/shared/utils"
-	"gorm.io/gorm"
+	"go-server/src/configs"
+	errorCode "go-server/src/constants/error_code"
+	"go-server/src/models/repositories"
+	"go-server/src/modules/books/dto"
+	basevalidator "go-server/src/share/base/base_validator"
+	"go-server/src/share/exception"
+	getLogger "go-server/src/share/logger"
+	response "go-server/src/share/response"
+	"go-server/src/share/utils"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 func GetBooks(c *gin.Context) {
@@ -23,8 +24,7 @@ func GetBooks(c *gin.Context) {
 	TestPanic()
 	// Validator
 	var listBookDto dto.ListBookDto
-	base_validator.ValidatorQuery(c, &listBookDto)
-	//fmt.Println(listBookDto)
+	basevalidator.ValidatorQuery(c, &listBookDto)
 	var bookRepository repositories.IBookRepository = repositories.NewBookRepository(configs.GetDB())
 
 	books, err := bookRepository.ListBooks()
@@ -32,23 +32,19 @@ func GetBooks(c *gin.Context) {
 		panic(err)
 	}
 	response.ReturnData(c, http.StatusOK, books)
-
-	//serializer := &BooksSerializer{c, books}
-	//response.ReturnData(c, http.StatusOK, serializer.Response())
-
 }
 
-func GetBookId(c *gin.Context) {
+func GetBookID(c *gin.Context) {
 	type IDDto struct {
-		BookId int `uri:"bookId" binding:"required"`
+		BookID int `uri:"bookId" binding:"required"`
 	}
 	var id IDDto
 
-	base_validator.ValidatorParams(c, &id)
+	basevalidator.ValidatorParams(c, &id)
 	var bookRepository repositories.IBookRepository = repositories.NewBookRepository(configs.GetDB())
-	book, err := bookRepository.GetBookById(id.BookId)
+	book, err := bookRepository.GetBookByID(id.BookID)
 	if err != nil {
-		panic(exception.BadRequestError(error_code.NOT_FOUND_BOOK, err.Error()))
+		panic(exception.BadRequestError(errorCode.NotFoundBook, err.Error()))
 	}
 	response.ReturnData(c, http.StatusOK, book)
 }
@@ -58,16 +54,15 @@ func CreateBooks(c *gin.Context) {
 	var bookRepository repositories.IBookRepository = repositories.NewBookRepository(configs.GetDB())
 
 	var createBookDto dto.CreateBookDto
-	base_validator.ValidatorsBody(c, &createBookDto)
+	basevalidator.ValidatorsBody(c, &createBookDto)
 	log.Println(createBookDto)
 	// check author
-	_, errGetAuthor := userRepository.GetUserById(createBookDto.Author)
+	_, errGetAuthor := userRepository.GetUserByID(createBookDto.Author)
 
 	if errors.Is(errGetAuthor, gorm.ErrRecordNotFound) {
-		panic(exception.BadRequestError(error_code.NOT_FOUND_AUTHOR, errGetAuthor.Error()))
+		panic(exception.BadRequestError(errorCode.NotFoundAuthor, errGetAuthor.Error()))
 		return
 	}
 	book := bookRepository.CreateBooks(createBookDto)
 	response.ReturnData(c, http.StatusCreated, book)
-	return
 }

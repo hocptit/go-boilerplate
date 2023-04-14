@@ -1,8 +1,9 @@
 package books
 
 import (
+	"go-server/src/models/entities"
+
 	"github.com/gin-gonic/gin"
-	"go-boilerplate/src/models/entities"
 )
 
 type BookSerializer struct {
@@ -16,23 +17,24 @@ type BookResponse struct {
 	Description string `json:"description"`
 }
 
-func (self *BookSerializer) Response() BookResponse {
+func (bookSerializer *BookSerializer) Response() BookResponse {
 	res := BookResponse{
-		Title:       self.Title,
-		Description: self.Description,
+		Title:       bookSerializer.Title,
+		Description: bookSerializer.Description,
 	}
 	return res
 }
 
-type BooksSerializer struct {
+type Serializer struct {
 	C     *gin.Context
 	Books []entities.BookEntity
 }
 
-func (self *BooksSerializer) Response() []BookResponse {
+func (bookSerializer *Serializer) Response() []BookResponse {
 	var response []BookResponse
-	for _, book := range self.Books {
-		serializer := BookSerializer{self.C, book}
+	// nolint
+	for _, book := range bookSerializer.Books {
+		serializer := BookSerializer{bookSerializer.C, book}
 		response = append(response, serializer.Response())
 	}
 	return response

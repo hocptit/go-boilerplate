@@ -1,3 +1,26 @@
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+vendor/
+article_clean
+_*
+.DS_Store
+engine
+bin/
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -14,3 +37,31 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Log
+./logs
+
+# compiled output
+/dist
+/build
+*node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+
+# Tests
+/coverage
+/.nyc_output
+
+
+yarn.lock
+package-lock.json
+
+.env

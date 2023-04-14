@@ -1,13 +1,15 @@
 package logger
 
 import (
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"gopkg.in/natefinch/lumberjack.v2"
-	loggerGorm "gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	// nolint
+	"gopkg.in/natefinch/lumberjack.v2"
+	loggerGorm "gorm.io/gorm/logger"
 )
 
 type BaseLogger struct {
@@ -15,11 +17,12 @@ type BaseLogger struct {
 	DatabaseLogging loggerGorm.Interface
 }
 
-var Logger *BaseLogger = &BaseLogger{}
+var Logger = &BaseLogger{}
 
-func GetNewLogger() *zap.SugaredLogger {
+func GetNewLogger(isWriteLog string) *BaseLogger {
 	atom := zap.NewAtomicLevel()
 	atom.SetLevel(zap.InfoLevel) // level has been set
+	// nolint
 	w := zapcore.AddSync(&lumberjack.Logger{
 		Filename:   "./logs/all.log",
 		MaxAge:     28, // days
@@ -44,13 +47,20 @@ func GetNewLogger() *zap.SugaredLogger {
 		EncodeLevel:  CustomLevelEncoder,
 		EncodeTime:   SyslogTimeEncoder,
 	})
-	core := zapcore.NewTee(
-		zapcore.NewCore(zapNewConsole,
-			w,
-			atom,
-		),
+	var core zapcore.Core
+	core = zapcore.NewTee(
 		zapcore.NewCore(zapFile, zapcore.AddSync(os.Stdout), atom),
 	)
+	if isWriteLog == "true" {
+		core = zapcore.NewTee(
+			zapcore.NewCore(zapNewConsole,
+				w,
+				atom,
+			),
+			zapcore.NewCore(zapFile, zapcore.AddSync(os.Stdout), atom),
+		)
+	}
+
 	logger := zap.New(core, zap.AddCaller())
 	sugar := logger.Sugar()
 	defer func(sugar *zap.SugaredLogger) {
@@ -59,7 +69,7 @@ func GetNewLogger() *zap.SugaredLogger {
 			return
 		}
 	}(sugar)
-
+	// nolint
 	wQuery := zapcore.AddSync(&lumberjack.Logger{
 		Filename:   "./logs/query.log",
 		MaxAge:     28, // days
@@ -70,9 +80,9 @@ func GetNewLogger() *zap.SugaredLogger {
 	databaseLogger := loggerGorm.New(
 		log.New(wQuery, "\r\n", log.LstdFlags), // io writer
 		loggerGorm.Config{
-			SlowThreshold:             time.Second,     // Slow SQL threshold
-			LogLevel:                  loggerGorm.Info, // Log level
-			IgnoreRecordNotFoundError: true,
+			SlowThreshold:             500 * time.Millisecond,
+			LogLevel:                  loggerGorm.Warn,
+			IgnoreRecordNotFoundError: false,
 		},
 	)
 	createLogger := &BaseLogger{
@@ -80,7 +90,7 @@ func GetNewLogger() *zap.SugaredLogger {
 		DatabaseLogging: databaseLogger,
 	}
 	Logger = createLogger
-	return sugar
+	return Logger
 }
 
 func SyslogTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
