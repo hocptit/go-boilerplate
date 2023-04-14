@@ -1,9 +1,9 @@
 package response
 
 import (
-	baseDto "go-server/src/share/base/base_dto"
-	"go-server/src/share/constant"
 	"net/http"
+	baseDto "server-go/src/share/base/base_dto"
+	"server-go/src/share/constant"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,8 @@ type PaginationMetaData struct {
 
 type WithPagination struct {
 	// nolint
-	data     any
+	data any
+	// nolint
 	metaData PaginationMetaData
 }
 
@@ -39,28 +40,14 @@ type Response struct {
 // nolint
 func ReturnData(c *gin.Context, code int, data any) {
 	var response Response
-	castData, err := data.(WithPagination)
-	if err {
-		response = Response{
-			Data:       data,
-			Message:    "",
-			Errors:     "",
-			ErrorCode:  "",
-			StatusCode: code,
-			Success:    true,
-			TraceID:    c.Keys[constant.TraceID].(string),
-		}
-	} else {
-		response = Response{
-			Data:       castData.data,
-			Message:    "",
-			Errors:     "",
-			ErrorCode:  "",
-			StatusCode: code,
-			Success:    true,
-			TraceID:    c.Keys[constant.TraceID].(string),
-			MetaData:   castData.metaData,
-		}
+	response = Response{
+		Data:       data,
+		Message:    "",
+		Errors:     "",
+		ErrorCode:  "",
+		StatusCode: code,
+		Success:    true,
+		TraceID:    c.Keys[constant.TraceID].(string),
 	}
 
 	c.JSON(http.StatusOK, response)

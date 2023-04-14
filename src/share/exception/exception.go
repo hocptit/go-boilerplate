@@ -3,14 +3,14 @@ package exception
 import (
 	"bytes"
 	"fmt"
-	errorcode "go-server/src/constants/error_code"
-	"go-server/src/share/constant"
-	getLogger "go-server/src/share/logger"
-	"go-server/src/share/response"
-	"go-server/src/share/utils"
 	"net/http"
 	"os"
 	"runtime"
+	errorcode "server-go/src/constants/error_code"
+	"server-go/src/share/constant"
+	getLogger "server-go/src/share/logger"
+	"server-go/src/share/response"
+	"server-go/src/share/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -123,6 +123,11 @@ func RecoveryError(appIsReturnDetailErrors string) gin.HandlerFunc {
 	}
 }
 
+func NoRouteError(c *gin.Context) {
+	ReturnBadRequestError(c, errorcode.NotFound, "Not found")
+}
+
+// ReturnError
 // nolint
 func ReturnError(c *gin.Context, code int, errorCode string, errors any) {
 	traceID := c.Keys[constant.TraceID].(string)
@@ -137,6 +142,8 @@ func ReturnError(c *gin.Context, code int, errorCode string, errors any) {
 	}
 	// 200
 	c.JSON(http.StatusOK, responseData)
+	c.Abort()
+	return
 }
 
 // BaseError
@@ -186,4 +193,10 @@ func InternalServerError(errorCode string, errors any) response.Response {
 // nolint
 func UnauthorizedError(errorCode string, errors any) response.Response {
 	return BaseError(http.StatusUnauthorized, errorCode, errors)
+}
+
+// StatusNotFoundError
+// nolint
+func StatusNotFoundError(errorCode string, errors any) response.Response {
+	return BaseError(http.StatusNotFound, errorCode, errors)
 }

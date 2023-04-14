@@ -5,7 +5,7 @@ package errorcode
 const (
 	/* AUTHOR ERROR*/
 
-	NotFoundAuthor = "010101"
+	UNAUTHORIZED = "010101"
 
 	/* AUTHOR ERROR*/
 

@@ -20,7 +20,7 @@ RUN apk update && apk upgrade && \
 
 WORKDIR /app
 
-EXPOSE 5000
+EXPOSE 5168
 
 COPY --from=builder /app/engine /app/
 COPY --from=builder /app/.env /app/

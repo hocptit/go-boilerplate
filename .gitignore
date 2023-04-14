@@ -65,3 +65,5 @@ yarn.lock
 package-lock.json
 
 .env
+firebase.json
+/tmp_app

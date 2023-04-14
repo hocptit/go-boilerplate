@@ -81,7 +81,7 @@ bin/mockery: bin
 GOLANGCI := $(shell command -v golangci-lint || echo "bin/golangci-lint")
 golangci-lint: bin/golangci-lint ## Installs golangci-lint (linter)
 
-bin/golangci-lint: VERSION := 1.39.0
+bin/golangci-lint: VERSION := 1.50.1
 bin/golangci-lint: GITHUB  := golangci/golangci-lint
 bin/golangci-lint: ARCHIVE := golangci-lint-$(VERSION)-$(OSTYPE)-amd64.tar.gz
 bin/golangci-lint: bin

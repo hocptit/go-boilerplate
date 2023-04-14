@@ -1,10 +1,10 @@
 package pagination
 
 import (
-	baseDto "go-server/src/share/base/base_dto"
-	validator "go-server/src/share/base/base_validator"
-	"go-server/src/share/constant"
-	"go-server/src/share/utils"
+	baseDto "server-go/src/share/base/base_dto"
+	validator "server-go/src/share/base/base_validator"
+	"server-go/src/share/constant"
+	"server-go/src/share/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

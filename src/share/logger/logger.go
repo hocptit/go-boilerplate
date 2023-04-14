@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"log"
 	"os"
 	"time"
 
@@ -69,25 +68,9 @@ func GetNewLogger(isWriteLog string) *BaseLogger {
 			return
 		}
 	}(sugar)
-	// nolint
-	wQuery := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   "./logs/query.log",
-		MaxAge:     28, // days
-		MaxSize:    20, // megabytes
-		MaxBackups: 3,
-	})
 
-	databaseLogger := loggerGorm.New(
-		log.New(wQuery, "\r\n", log.LstdFlags), // io writer
-		loggerGorm.Config{
-			SlowThreshold:             500 * time.Millisecond,
-			LogLevel:                  loggerGorm.Warn,
-			IgnoreRecordNotFoundError: false,
-		},
-	)
 	createLogger := &BaseLogger{
-		Logging:         sugar,
-		DatabaseLogging: databaseLogger,
+		Logging: sugar,
 	}
 	Logger = createLogger
 	return Logger

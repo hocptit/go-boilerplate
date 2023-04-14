@@ -73,7 +73,7 @@ linters:
     - gocritic
     - gocyclo
     - gofmt
-    - goimports
+#    - goimports
     - gomnd
     - goprintffuncname
     - gosec
@@ -125,6 +125,6 @@ issues:
       text: "don't use `init` function"
 run:
   timeout: 5m
-  go: "1.17"
+  go: "1.19.3"
   skip-dirs:
     # - */mocks

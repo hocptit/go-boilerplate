@@ -9,11 +9,13 @@ on:
 
 jobs:
   validate-lint:
-    runs-on: [self-hosted,gz-locker-server-dev]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 #      - uses: docker
       - name: Using docker to check eslint
         run: |
-          ls
+          echo "Start lint...."
+          docker run -v $(pwd):/app -w /app golangci/golangci-lint:v1.50.1 golangci-lint  run -c .golangci.yaml ./...
+          echo "Lint done."

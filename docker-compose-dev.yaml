@@ -1,15 +1,21 @@
 version: "3.7"
 services:
   go-server:
-    image: gz-locker-server
+    image: ghcr.io/hocptit/luniand-go-be:latest
     ports:
-      - "5068:5000"
+      - "5168:5168"
     deploy:
       replicas: 1
       resources:
         limits:
           cpus: '1'
-          memory: '250MB'
+          memory: '1050MB'
         reservations:
           cpus: '0.5'
-          memory: '100MB'
+          memory: '500MB'
+    networks:
+      - luniand-dev
+
+networks:
+  luniand-dev:
+    external: true

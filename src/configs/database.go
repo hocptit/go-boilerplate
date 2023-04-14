@@ -1,37 +1,32 @@
 package configs
 
 import (
-	getLogger "go-server/src/share/logger"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var DB *gorm.DB
+var (
+	Ctx            = context.TODO()
+	BookCollection *mongo.Collection
+	UserCollection *mongo.Collection
+)
 
-func Migrate(db *gorm.DB) {
-	err := db.AutoMigrate()
+func Setup(uri, database string) {
+	option := options.Client().ApplyURI(uri)
+
+	client, err := mongo.Connect(Ctx, option)
 	if err != nil {
 		panic(err)
 	}
-}
-func Init(config Config) *gorm.DB {
-	var dbConfig gorm.Config
 
-	if config.DBIsWriteLog == "true" {
-		dbConfig.Logger = getLogger.GetLogger().DatabaseLogging
-	}
-	db, err := gorm.Open(postgres.Open(config.DBUrl), &dbConfig)
-	if err != nil {
+	// Ping the primary
+	if err := client.Ping(Ctx, readpref.Primary()); err != nil {
 		panic(err)
 	}
-	sqlCfg, _ := db.DB()
-	maxConn := 100
-	sqlCfg.SetMaxOpenConns(maxConn)
-	DB = db
-	return DB
-}
-
-func GetDB() *gorm.DB {
-	return DB
+	fmt.Println("Successfully connected and pinged.")
+	db := client.Database(database)
+	BookCollection = db.Collection("books")
 }

@@ -3,8 +3,8 @@ package basevalidator
 import (
 	"encoding/json"
 	"fmt"
-	errorCode "go-server/src/constants/error_code"
-	"go-server/src/share/exception"
+	errorCode "server-go/src/constants/error_code"
+	"server-go/src/share/exception"
 	"strings"
 	"time"
 

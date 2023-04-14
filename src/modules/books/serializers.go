@@ -1,14 +1,11 @@
 package books
 
 import (
-	"go-server/src/models/entities"
-
 	"github.com/gin-gonic/gin"
 )
 
 type BookSerializer struct {
 	C *gin.Context
-	entities.BookEntity
 }
 
 type BookResponse struct {
@@ -18,24 +15,16 @@ type BookResponse struct {
 }
 
 func (bookSerializer *BookSerializer) Response() BookResponse {
-	res := BookResponse{
-		Title:       bookSerializer.Title,
-		Description: bookSerializer.Description,
-	}
+	res := BookResponse{}
 	return res
 }
 
 type Serializer struct {
-	C     *gin.Context
-	Books []entities.BookEntity
+	C *gin.Context
 }
 
 func (bookSerializer *Serializer) Response() []BookResponse {
 	var response []BookResponse
 	// nolint
-	for _, book := range bookSerializer.Books {
-		serializer := BookSerializer{bookSerializer.C, book}
-		response = append(response, serializer.Response())
-	}
 	return response
 }

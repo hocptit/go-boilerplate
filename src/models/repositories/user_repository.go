@@ -1,29 +1,32 @@
 package repositories
 
 import (
-	"go-server/src/models/entities"
-
-	"gorm.io/gorm"
+	"context"
+	"go.mongodb.org/mongo-driver/mongo"
+	db "server-go/src/configs"
+	"server-go/src/models/entities"
 )
 
 type IUserRepository interface {
-	GetUserByID(id int) (entities.UserEntity, error)
-	ListUserByCond(conds ...interface{}) ([]entities.UserEntity, error)
-}
-type UserRepository struct {
-	db *gorm.DB
+	CreateUser(chain *entities.Book) error
 }
 
-func NewUserRepository(db *gorm.DB) *UserRepository {
-	return &UserRepository{db: db}
+type UserRepository struct {
+	userCollection *mongo.Collection
+	ctx            context.Context
 }
-func (userRepository *UserRepository) GetUserByID(id int) (entities.UserEntity, error) {
-	var user entities.UserEntity
-	err := userRepository.db.First(&user, id).Error
-	return user, err
+
+func NewUserRepository() IUserRepository {
+	return &UserRepository{
+		userCollection: db.UserCollection,
+		ctx:            db.Ctx,
+	}
 }
-func (userRepository *UserRepository) ListUserByCond(conds ...interface{}) ([]entities.UserEntity, error) {
-	var users []entities.UserEntity
-	err := userRepository.db.Find(&users, conds).Error
-	return users, err
+
+func (c *UserRepository) CreateUser(user *entities.Book) error {
+	_, err := c.userCollection.InsertOne(c.ctx, user)
+	if err != nil {
+		return err
+	}
+	return nil
 }

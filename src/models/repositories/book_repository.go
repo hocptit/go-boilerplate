@@ -1,43 +1,63 @@
 package repositories
 
 import (
-	"go-server/src/models/entities"
-	"go-server/src/modules/books/dto"
-
-	"gorm.io/gorm"
+	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	db "server-go/src/configs"
+	"server-go/src/models/entities"
 )
 
 type IBookRepository interface {
-	ListBooks(conds ...interface{}) ([]entities.BookEntity, error)
-	CreateBooks(bookData dto.CreateBookDto) entities.BookEntity
-	GetBookByID(id int) (entities.BookEntity, error)
+	CreateBook(chain *entities.Book) error
+	FindAll() ([]*entities.Book, error)
+	GetBookByID(id string) (*entities.Book, error)
 }
+
 type BookRepository struct {
-	db *gorm.DB
+	bookCollection *mongo.Collection
+	ctx            context.Context
 }
 
-func NewBookRepository(db *gorm.DB) *BookRepository {
-	return &BookRepository{db: db}
-}
-
-func (bookRepository *BookRepository) ListBooks(conds ...interface{}) ([]entities.BookEntity, error) {
-	var books []entities.BookEntity
-	err := bookRepository.db.Find(&books, conds).Error
-	return books, err
-}
-
-func (bookRepository *BookRepository) CreateBooks(bookData dto.CreateBookDto) entities.BookEntity {
-	book := entities.BookEntity{
-		Title:       bookData.Title,
-		AuthorID:    bookData.Author,
-		Description: bookData.Description,
+func NewBookRepository() IBookRepository {
+	return &BookRepository{
+		bookCollection: db.BookCollection,
+		ctx:            db.Ctx,
 	}
-	bookRepository.db.Create(&book)
-	return book
 }
 
-func (bookRepository *BookRepository) GetBookByID(id int) (entities.BookEntity, error) {
-	var book entities.BookEntity
-	err := bookRepository.db.First(&book, id).Error
-	return book, err
+func (c *BookRepository) CreateBook(book *entities.Book) error {
+	_, err := c.bookCollection.InsertOne(c.ctx, book)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *BookRepository) FindAll() ([]*entities.Book, error) {
+	var books []*entities.Book
+	cursor, err := c.bookCollection.Find(c.ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(c.ctx, &books)
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
+}
+
+func (c *BookRepository) GetBookByID(id string) (*entities.Book, error) {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var book entities.Book
+	err = c.bookCollection.FindOne(c.ctx, bson.M{"_id": objID}).Decode(&book)
+	if err != nil {
+		return nil, err
+	}
+	return &book, nil
 }

@@ -1,6 +1,6 @@
 package dto
 
 type ListBookDto struct {
-	Author int    `form:"author" binding:"required"`
+	Author int    `form:"author"`
 	Title  string `form:"title"`
 }

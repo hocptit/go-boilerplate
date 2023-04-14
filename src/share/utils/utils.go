@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"go-server/src/share/constant"
+	"server-go/src/share/constant"
 
 	"github.com/gin-gonic/gin"
 )

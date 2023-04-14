@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Port                    string `mapstructure:"PORT"`
 	DBUrl                   string `mapstructure:"DB_URL"`
+	DatabaseName            string `mapstructure:"DATABASE_NAME"`
 	Env                     string `mapstructure:"ENV"`
 	AppName                 string `mapstructure:"APP_NAME"`
 	AppIsWriteLog           string `mapstructure:"APP_IS_WRITE_LOG"`

@@ -1,23 +1,22 @@
 package main
 
 import (
-	"go-server/src"
-	"go-server/src/configs"
-	"go-server/src/share/constant"
-	getLogger "go-server/src/share/logger"
+	"server-go/src"
+	"server-go/src/configs"
+	"server-go/src/share/constant"
+	getLogger "server-go/src/share/logger"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	config, _ := configs.LoadConfig(".env")
+	configs.Setup(config.DBUrl, config.DatabaseName)
+
 	logger := getLogger.GetNewLogger(config.AppIsWriteLog).Logging
 	logger.Info("Prepare start server..")
-	db := configs.Init(config)
 	if config.Env == constant.EnvProd {
 		gin.SetMode(gin.ReleaseMode)
-	} else {
-		configs.Migrate(db)
 	}
 	app := gin.New()
 	src.Router(app, config)

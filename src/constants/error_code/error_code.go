@@ -6,6 +6,7 @@ const (
 
 	InternalServer = "000001"
 	InvalidParams  = "000002"
+	NotFound       = "000003"
 	UNKNOWN        = "999999"
 
 	/* COMMON ERROR*/
@@ -16,12 +17,13 @@ var MsgFlags = map[string]string{
 	/* COMMON ERROR*/
 	InternalServer: "INTERNAL_SERVER",
 	InvalidParams:  "INVALID_PARAMS",
+	NotFound:       "NOT_FOUND",
 	UNKNOWN:        "UNKNOWN",
 	/* COMMON ERROR*/
 
 	/* AUTHOR ERROR*/
 
-	NotFoundAuthor: "NOT_FOUND_AUTHOR",
+	UNAUTHORIZED: "UNAUTHORIZED",
 
 	/* AUTHOR ERROR*/
 
