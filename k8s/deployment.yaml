@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-backend-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-api-deployment
+  namespace: demo-backend-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server-api
+  template:
+    metadata:
+      labels:
+        app: server-api
+    spec:
+      containers:
+      - name: server-api
+        image: 65.108.131.181:5568/server-api:v1
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            cpu: "1"
+          requests:
+            cpu: "0.5"
+      imagePullSecrets:
+      - name: regcred
