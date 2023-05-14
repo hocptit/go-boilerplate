@@ -21,7 +21,7 @@ kubectl apply -f service.yaml
 => access minikube docker run curl 127.0.0.1:31186 => done
 kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0'
 => using pm2 to keep context
-
-
+pm2 start "kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0'"
+kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0' & 
 
 # 
