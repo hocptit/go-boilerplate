@@ -10,6 +10,7 @@ metadata:
   namespace: demo-backend-ns
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: server-api
