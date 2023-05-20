@@ -1,6 +1,7 @@
 package books
 
 import (
+	"fmt"
 	"go-server/src/configs"
 	errorCode "go-server/src/constants/error_code"
 	"go-server/src/models/repositories"
@@ -17,6 +18,16 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
+
+func TestPerformance(c *gin.Context) {
+	logger := getLogger.GetLogger().Logging
+	logger.Info(utils.TID(c), "My LOGGER")
+	for i := 0; i < 10000000; i++ {
+		// Your code here
+		fmt.Println(i)
+	}
+	response.ReturnData(c, http.StatusOK, "OK")
+}
 
 func GetBooks(c *gin.Context) {
 	logger := getLogger.GetLogger().Logging
