@@ -24,9 +24,18 @@ kubectl set image deployment/server-api-deployment server-api=65.108.131.181:556
 => access minikube docker run curl 127.0.0.1:31186 => done
 kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0'
 => using pm2 to keep context
+
 pm2 start "kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0'"
 kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0' & 
-//todo
+If forward 5000, not access all pods
+For access all pods, access to kubemini, and curl 127.0.0.1:31186 # access nodePort public
+=> Use
+    In host machine install docker and minikube
+    minikube ip => 192.168.49.2
+    192.168.49.2:31186
+    => using in host machine, not connect from client
+    Using nodejs proxy in /proxy
+
 Update with new image
  kubectl set image deployment/server-api-deployment server-api=65.108.131.181:5568/server api:performancetest -n demo-backend-ns
 
