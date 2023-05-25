@@ -28,6 +28,7 @@ pm2 start "kubectl port-forward service/demo-backend-api-service -n demo-backend
 kubectl port-forward service/demo-backend-api-service -n demo-backend-ns 5668:80 --address='0.0.0.0' & 
 //todo
 Update with new image
+ kubectl set image deployment/server-api-deployment server-api=65.108.131.181:5568/server api:performancetest -n demo-backend-ns
 
 
 # 

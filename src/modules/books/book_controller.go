@@ -6,7 +6,7 @@ import (
 
 func Controller(v1route *gin.RouterGroup) {
 	bookRoute := v1route.Group("/books")
-	bookRoute.GET("/", func(context *gin.Context) {
+	bookRoute.GET("/test", func(context *gin.Context) {
 		TestPerformance(context)
 	})
 	bookRoute.GET("/", func(context *gin.Context) {
